@@ -1,9 +1,12 @@
+# main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import os
 from app.api.endpoints import trading, sentiment, training
 from app.core.config import settings
+from app.api.endpoints import rl_training
+from app.api.endpoints import model_management, backtest
 
 
 @asynccontextmanager
@@ -39,6 +42,9 @@ app.add_middleware(
 app.include_router(trading.router, prefix="/ai", tags=["trading"])
 app.include_router(sentiment.router, prefix="/ai", tags=["sentiment"])
 app.include_router(training.router, prefix="/ai", tags=["training"])
+app.include_router(rl_training.router, prefix="/ai", tags=["reinforcement_learning"])
+app.include_router(model_management.router, prefix="/ai", tags=["model_management"])
+app.include_router(backtest.router, prefix="/ai", tags=["backtest"])
 
 
 @app.get("/health")
