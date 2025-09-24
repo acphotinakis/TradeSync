@@ -4,12 +4,17 @@ import { Order, Portfolio, OrderRequest } from '@/types/trading';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
 class TradingEngine {
-  private async fetchWithFallback<T>(endpoint: string, mockData: T): Promise<T> {
+  private async fetchWithFallback<T>(
+    endpoint: string, 
+    mockData: T, 
+    options?: RequestInit
+  ): Promise<T> {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         headers: {
           'Content-Type': 'application/json',
         },
+        ...options,
       });
 
       if (!response.ok) {
@@ -52,30 +57,6 @@ class TradingEngine {
   async getOrders(): Promise<Order[]> {
     const mockOrders: Order[] = [];
     return this.fetchWithFallback('/trading/orders', mockOrders);
-  }
-
-  private async fetchWithFallback<T>(
-    endpoint: string, 
-    mockData: T, 
-    options?: RequestInit
-  ): Promise<T> {
-    try {
-      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        ...options,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.warn(`API call failed for ${endpoint}, using mock data:`, error);
-      return mockData;
-    }
   }
 }
 
